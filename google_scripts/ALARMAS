@@ -1,0 +1,37 @@
+function doPost(e) {
+  // Decodifica los datos recibidos en base64
+  var data = Utilities.base64Decode(e.parameters.data);
+  var nombreArchivo = "ULTIMA_ALARMA.jpg";
+  var blob = Utilities.newBlob(data, e.parameters.mimetype, nombreArchivo);
+
+  // Obtiene o crea la carpeta "GASES_FOTOS"
+  var folder, folders = DriveApp.getFoldersByName("GASES_ALARMA");
+  if (folders.hasNext()) {
+    folder = folders.next();
+  } else {
+    folder = DriveApp.createFolder("GASES_ALARMA");
+  }
+
+  // Busca el archivo con el nombre especificado en la carpeta
+  var files = folder.getFilesByName(nombreArchivo);
+  
+  // Elimina el archivo existente si lo encuentra
+  while (files.hasNext()) {
+    var file = files.next();
+    file.setTrashed(true); // Mueve el archivo a la papelera
+  }
+
+  // Crea un nuevo archivo con el nombre especificado
+  folder.createFile(blob);
+
+  var foto = DriveApp.getFilesByName('ULTIMA_ALARMA.jpg');
+ //var file = folder.createFile(blob); 
+  MailApp.sendEmail({
+    to: "jozaffat@gmail.com ,raymundo.cadena@gmail.com ",
+    subject: "ALARMA",
+    htmlBody: "ALARMA GASES",
+    attachments: [foto.next()]  
+  });
+
+  return ContentService.createTextOutput('Completo')
+}

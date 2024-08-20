@@ -1,0 +1,28 @@
+function doPost(e) {
+  // Decodifica los datos recibidos en base64
+  var data = Utilities.base64Decode(e.parameters.data);
+  var nombreArchivo = "lastfoto.jpg";
+  var blob = Utilities.newBlob(data, e.parameters.mimetype, nombreArchivo);
+
+  // Obtiene o crea la carpeta "GASES_FOTOS"
+  var folder, folders = DriveApp.getFoldersByName("GASES_FOTOS");
+  if (folders.hasNext()) {
+    folder = folders.next();
+  } else {
+    folder = DriveApp.createFolder("GASES_FOTOS");
+  }
+
+  // Busca el archivo con el nombre especificado en la carpeta
+  var files = folder.getFilesByName(nombreArchivo);
+  
+  // Elimina el archivo existente si lo encuentra
+  while (files.hasNext()) {
+    var file = files.next();
+    file.setTrashed(true); // Mueve el archivo a la papelera
+  }
+
+  // Crea un nuevo archivo con el nombre especificado
+  folder.createFile(blob);
+
+  return ContentService.createTextOutput('Completo');
+}

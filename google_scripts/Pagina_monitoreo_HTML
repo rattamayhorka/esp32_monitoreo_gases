@@ -1,0 +1,41 @@
+function doGet() {
+  
+  var folderId = '1IV23Ga8kx3hlua0gHDYKz1iS8oD63uAZ'; // Reemplaza con el ID de tu carpeta
+  var fileId = getLatestImageFileId(folderId);
+
+  var htmlOutput = HtmlService.createHtmlOutput(
+    '<!DOCTYPE html>' +
+    '<html>' +
+    '<head><title>Última Imagen</title></head>' +
+    '<body>' +
+    '<iframe src="https://drive.google.com/file/d/' + fileId + '/preview" width="640" height="480" allow="autoplay"></iframe>' +
+    '</body>' +
+    '</html>'
+  );
+
+  return htmlOutput;
+}
+
+function getLatestImageFileId(folderId) {
+  var folder = DriveApp.getFolderById(folderId);
+  var files = folder.getFiles();
+  var latestFile = null;
+  var latestDate = 0;
+
+  while (files.hasNext()) {
+    var file = files.next();
+    if (file.getMimeType().startsWith('image/')) {
+      var lastUpdated = file.getLastUpdated().getTime();
+      if (lastUpdated > latestDate) {
+        latestDate = lastUpdated;
+        latestFile = file;
+      }
+    }
+  }
+
+  if (latestFile) {
+    return latestFile.getId();
+  } else {
+    throw new Error('No image files found in the folder.');
+  }
+}
