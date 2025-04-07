@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "ESP32-CAM(1)")(type "KiCad")(uri "${KIPRJMOD}/libraries/ESP32-CAM(1)")(options "")(descr ""))
+)
